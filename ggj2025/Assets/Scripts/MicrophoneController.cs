@@ -13,6 +13,11 @@ public class MicrophoneController : MonoBehaviour
     private bool hasExploded = false;
     private bool isMicInitialized = false;
     public GameObject bomb;
+    public int charge = 0;
+    public int maxCharge = 100;
+
+    private float activeSoundDuration = 0f; // Tracks how long loudness is above threshold
+    private float lastLoudnessTime = 0f;    // Tracks the last time loudness exceeded threshold
 
     void Start()
     {
@@ -25,8 +30,6 @@ public class MicrophoneController : MonoBehaviour
             // Assign the microphone as the AudioClip
             audioSource.clip = Microphone.Start(null, true, 1, 44100); // Default mic
             audioSource.loop = true;
-            // audioSource.mute = true; // Mute the mic so we don't hear it
-            // Wait for the microphone to start
             StartCoroutine(WaitForMicToInitialize());
         }
         else
@@ -55,25 +58,40 @@ public class MicrophoneController : MonoBehaviour
         float loudness = GetLoudness();
         Debug.Log("Loudness: " + loudness);
 
-        // Trigger explosion when loudness exceeds 0.08
-        if (loudness > 0.25f && !hasExploded)
-        {
-            Debug.Log($"Explosion effect happens at loudness {loudness}");
-            TriggerExplosion();
-        }
-
-        // Check if loudness exceeds the threshold (to scale object)
+        // Check if loudness exceeds the threshold
         if (loudness > threshold)
         {
+            activeSoundDuration += Time.deltaTime; // Increase duration while above threshold
+            lastLoudnessTime = Time.time;         // Update last loudness time
+
+            // Increment charge based on duration above threshold
+            charge = Mathf.Min((int)(activeSoundDuration * 10), maxCharge); // Scale charge by time
+            Debug.Log($"Charge: {charge}/{maxCharge}");
+
+            // Trigger explosion if charge reaches maxCharge
+            if (charge >= maxCharge && !hasExploded)
+            {
+                TriggerExplosion();
+            }
+
             // Scale object based on loudness
             float scaleFactor = 1 + (loudness * sensitivity);
             transform.localScale = baseScale * scaleFactor;
         }
         else
         {
-            // Reset to base scale when loudness is below threshold
+            // Reset object scale when loudness is below threshold
             transform.localScale = baseScale;
+
+            // Reset duration if too much time has passed since last loudness
+            if (Time.time - lastLoudnessTime > 0.5f) // E.g., reset after 0.5 seconds of silence
+            {
+                activeSoundDuration = 0f;
+            }
         }
+
+        // Update particle intensity based on charge
+        UpdateParticleIntensity();
     }
 
     void TriggerExplosion()
@@ -89,9 +107,26 @@ public class MicrophoneController : MonoBehaviour
         }
 
         hasExploded = true; // Prevent triggering it again until reset
-        Debug.Log("has exploded");
+        Debug.Log("Explosion triggered!");
 
         Destroy(bomb);
+    }
+
+    void UpdateParticleIntensity()
+    {
+        if (explosionEffect != null)
+        {
+            // Adjust particle properties based on the charge level
+            ParticleSystem.MainModule main = explosionEffect.main;
+            ParticleSystem.EmissionModule emission = explosionEffect.emission;
+
+            float normalizedCharge = (float)charge / maxCharge; // Normalize charge between 0 and 1
+
+            // Scale start size and start speed based on charge
+            main.startSize = Mathf.Lerp(0.5f, 3.0f, normalizedCharge); // From 0.5 to 3.0
+            main.startSpeed = Mathf.Lerp(1.0f, 10.0f, normalizedCharge); // From 1.0 to 10.0
+            emission.rateOverTime = Mathf.Lerp(10, 100, normalizedCharge); // From 10 particles/sec to 100
+        }
     }
 
     // Function to calculate the loudness of the microphone input
@@ -99,8 +134,6 @@ public class MicrophoneController : MonoBehaviour
     {
         float[] data = new float[256]; // Array to hold audio samples
 
-        // Wait for the microphone to start recording and fill data.
-        // It's important to wait until there's actual data from the microphone.
         if (Microphone.GetPosition(null) > 0)
         {
             audioSource.GetOutputData(data, 0); // Fill array with raw audio data
@@ -112,12 +145,11 @@ public class MicrophoneController : MonoBehaviour
 
         float sum = 0f;
 
-        // Start from index 1 to skip the first sample if needed
-        for (int i = 1; i < data.Length; i++)
+        for (int i = 0; i < data.Length; i++)
         {
-            sum += Mathf.Abs(data[i]); // Sum the absolute values of the samples starting from the second element
+            sum += Mathf.Abs(data[i]); // Sum the absolute values of the samples
         }
 
-        return sum / (data.Length - 1); // Return average loudness
+        return sum / data.Length; // Return average loudness
     }
 }
