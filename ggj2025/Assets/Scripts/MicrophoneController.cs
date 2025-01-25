@@ -51,16 +51,16 @@ public class MicrophoneController : MonoBehaviour
         Debug.Log("Microphone initialized.");
     }
 
-    void Update()
+  void Update()
 {
     if (!isMicInitialized) return;
 
-    // Store the previous charge before updating
-    int previousCharge = charge;
-
     // Get the current loudness of the microphone input
     float loudness = GetLoudness();
-    Debug.Log("Loudness: " + loudness);
+    Debug.Log($"Loudness: {loudness}");
+
+    // Store the previous charge for comparison
+    int currentCharge = charge;
 
     // Check loudness and calculate charge
     if (loudness > threshold)
@@ -68,8 +68,8 @@ public class MicrophoneController : MonoBehaviour
         activeSoundDuration += Time.deltaTime;
         lastLoudnessTime = Time.time;
 
-        // Update the charge based on sound duration
-        charge = Mathf.Min((int)(activeSoundDuration * 10), maxCharge);
+        // Update the charge based on loudness and time
+        charge = Mathf.Min(charge + Mathf.RoundToInt(loudness * sensitivity * 100 * Time.deltaTime), maxCharge);
         Debug.Log($"Charge: {charge}/{maxCharge}");
 
         // Trigger explosion when charge reaches maxCharge
@@ -86,20 +86,29 @@ public class MicrophoneController : MonoBehaviour
     {
         transform.localScale = baseScale;
 
-        // Reset charge after a delay if there's no loudness
-        if (Time.time - lastLoudnessTime > 0.5f)
+        // Gradually reduce charge if there's no loudness
+        if (Time.time - lastLoudnessTime > 0.5f && charge > 0)
         {
-            activeSoundDuration = 0f;
-            charge = 0;
+            charge = Mathf.Max(charge - Mathf.RoundToInt(sensitivity * 5 * Time.deltaTime), 0);
+            activeSoundDuration = 0f; // Reset active sound duration
         }
     }
 
     // Check if charge dropped to zero after being higher
+    if (charge == 0 && currentCharge > 0)
+    {
+        Debug.Log("Charge depleted, triggering explosion.");
+        TriggerExplosion();
+    }
 
-    Debug.Log($"Charge: {charge}, Previous Charge: {previousCharge}");
     // Update particle intensity based on charge
-    HandleStateChange();
     UpdateParticleIntensity();
+
+    // Update previous charge at the end of the frame
+    previousCharge = currentCharge;
+
+    // Debugging: Track activeSoundDuration and charge
+    Debug.Log($"ActiveSoundDuration: {activeSoundDuration}, Previous Charge: {previousCharge}, Current Charge: {charge}");
 }
 
 

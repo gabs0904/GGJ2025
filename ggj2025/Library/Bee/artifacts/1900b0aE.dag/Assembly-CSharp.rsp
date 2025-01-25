@@ -381,6 +381,7 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEngine.UI.ref.dll"
 "Assets/Scripts/MainMenu.cs"
 "Assets/Scripts/MicrophoneController.cs"
+"Assets/Scripts/MicrophoneController1.cs"
 "Assets/Scripts/SoundInputController.cs"
 "Assets/Solodream/VFX_FireballPack/Scripts/FireballHorizontalMovement.cs"
 "Assets/UnityTechnologies/ParticlePack/Shared/Ramps/Runtime/RampAsset.cs"
