@@ -56,7 +56,7 @@ public class MicrophoneController : MonoBehaviour
         Debug.Log("Loudness: " + loudness);
 
         // Trigger explosion when loudness exceeds 0.08
-        if (loudness > 0.18f && !hasExploded)
+        if (loudness > 0.25f && !hasExploded)
         {
             Debug.Log($"Explosion effect happens at loudness {loudness}");
             TriggerExplosion();
