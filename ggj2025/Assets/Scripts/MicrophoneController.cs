@@ -14,10 +14,11 @@ public class MicrophoneController : MonoBehaviour
     private bool isMicInitialized = false;
     public GameObject bomb;
     public int charge = 0;
-    public int maxCharge = 100;
+    public int maxCharge = 1000;
 
     private float activeSoundDuration = 0f; // Tracks how long loudness is above threshold
     private float lastLoudnessTime = 0f;    // Tracks the last time loudness exceeded threshold
+    private int previousCharge = 0;         // Tracks the previous charge state
 
     void Start()
     {
@@ -51,47 +52,76 @@ public class MicrophoneController : MonoBehaviour
     }
 
     void Update()
+{
+    if (!isMicInitialized) return;
+
+    // Store the previous charge before updating
+    int previousCharge = charge;
+
+    // Get the current loudness of the microphone input
+    float loudness = GetLoudness();
+    Debug.Log("Loudness: " + loudness);
+
+    // Check loudness and calculate charge
+    if (loudness > threshold)
     {
-        if (!isMicInitialized) return;
+        activeSoundDuration += Time.deltaTime;
+        lastLoudnessTime = Time.time;
 
-        // Get the current loudness of the microphone input
-        float loudness = GetLoudness();
-        Debug.Log("Loudness: " + loudness);
+        // Update the charge based on sound duration
+        charge = Mathf.Min((int)(activeSoundDuration * 10), maxCharge);
+        Debug.Log($"Charge: {charge}/{maxCharge}");
 
-        // Check if loudness exceeds the threshold
-        if (loudness > threshold)
+        // Trigger explosion when charge reaches maxCharge
+        if (charge >= maxCharge && !hasExploded)
         {
-            activeSoundDuration += Time.deltaTime; // Increase duration while above threshold
-            lastLoudnessTime = Time.time;         // Update last loudness time
-
-            // Increment charge based on duration above threshold
-            charge = Mathf.Min((int)(activeSoundDuration * 10), maxCharge); // Scale charge by time
-            Debug.Log($"Charge: {charge}/{maxCharge}");
-
-            // Trigger explosion if charge reaches maxCharge
-            if (charge >= maxCharge && !hasExploded)
-            {
-                TriggerExplosion();
-            }
-
-            // Scale object based on loudness
-            float scaleFactor = 1 + (loudness * sensitivity);
-            transform.localScale = baseScale * scaleFactor;
-        }
-        else
-        {
-            // Reset object scale when loudness is below threshold
-            transform.localScale = baseScale;
-
-            // Reset duration if too much time has passed since last loudness
-            if (Time.time - lastLoudnessTime > 0.5f) // E.g., reset after 0.5 seconds of silence
-            {
-                activeSoundDuration = 0f;
-            }
+            TriggerExplosion();
         }
 
-        // Update particle intensity based on charge
-        UpdateParticleIntensity();
+        // Scale object based on loudness
+        float scaleFactor = 1 + (loudness * sensitivity);
+        transform.localScale = baseScale * scaleFactor;
+    }
+    else
+    {
+        transform.localScale = baseScale;
+
+        // Reset charge after a delay if there's no loudness
+        if (Time.time - lastLoudnessTime > 0.5f)
+        {
+            activeSoundDuration = 0f;
+            charge = 0;
+        }
+    }
+
+    // Check if charge dropped to zero after being higher
+
+    Debug.Log($"Charge: {charge}, Previous Charge: {previousCharge}");
+    // Update particle intensity based on charge
+    HandleStateChange();
+    UpdateParticleIntensity();
+}
+
+
+    void HandleStateChange()
+    {
+        Debug.Log($"Charge: {charge}, Previous Charge: {previousCharge}");
+
+        // Check if charge dropped to 0 from a higher value
+        if (charge == 0 && previousCharge > 0)
+        {
+            Debug.Log("OnChargeDepleted called!");
+            OnChargeDepleted();
+        }
+
+        // Update previous charge state
+        previousCharge = charge;
+    }
+
+    void OnChargeDepleted()
+    {
+        Debug.Log("Charge depleted. Handling the event...");
+        // Add any custom logic for when the charge is depleted
     }
 
     void TriggerExplosion()
@@ -122,10 +152,14 @@ public class MicrophoneController : MonoBehaviour
 
             float normalizedCharge = (float)charge / maxCharge; // Normalize charge between 0 and 1
 
+            Debug.Log($"Normalized Charge: {normalizedCharge}");
+
             // Scale start size and start speed based on charge
             main.startSize = Mathf.Lerp(0.5f, 3.0f, normalizedCharge); // From 0.5 to 3.0
             main.startSpeed = Mathf.Lerp(1.0f, 10.0f, normalizedCharge); // From 1.0 to 10.0
             emission.rateOverTime = Mathf.Lerp(10, 100, normalizedCharge); // From 10 particles/sec to 100
+
+            Debug.Log($"Particle Size: {main.startSize.constant}, Speed: {main.startSpeed.constant}, Emission Rate: {emission.rateOverTime.constant}");
         }
     }
 
