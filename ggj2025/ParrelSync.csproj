@@ -36,19 +36,19 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\ParrelSync\Editor\AssetModBlock\ParrelSyncAssetModificationProcessor.cs" />
-     <Compile Include="Assets\ParrelSync\Editor\AssetModBlock\EditorQuit.cs" />
-     <Compile Include="Assets\ParrelSync\Editor\ParrelSyncProjectSettings.cs" />
-     <Compile Include="Assets\ParrelSync\Editor\UpdateChecker.cs" />
-     <Compile Include="Assets\ParrelSync\Editor\ClonesManager.cs" />
-     <Compile Include="Assets\ParrelSync\Editor\ClonesManagerWindow.cs" />
-     <Compile Include="Assets\ParrelSync\Editor\Preferences.cs" />
-     <Compile Include="Assets\ParrelSync\Editor\ValidateCopiedFoldersIntegrity.cs" />
-     <Compile Include="Assets\ParrelSync\Editor\ExternalLinks.cs" />
-     <Compile Include="Assets\ParrelSync\Editor\FileUtilities.cs" />
      <Compile Include="Assets\ParrelSync\Editor\Project.cs" />
-     <Compile Include="Assets\ParrelSync\Editor\NonCore\OtherMenuItem.cs" />
+     <Compile Include="Assets\ParrelSync\Editor\ClonesManagerWindow.cs" />
+     <Compile Include="Assets\ParrelSync\Editor\AssetModBlock\ParrelSyncAssetModificationProcessor.cs" />
+     <Compile Include="Assets\ParrelSync\Editor\ClonesManager.cs" />
+     <Compile Include="Assets\ParrelSync\Editor\ValidateCopiedFoldersIntegrity.cs" />
      <Compile Include="Assets\ParrelSync\Editor\NonCore\AskFeedbackDialog.cs" />
+     <Compile Include="Assets\ParrelSync\Editor\AssetModBlock\EditorQuit.cs" />
+     <Compile Include="Assets\ParrelSync\Editor\Preferences.cs" />
+     <Compile Include="Assets\ParrelSync\Editor\ExternalLinks.cs" />
+     <Compile Include="Assets\ParrelSync\Editor\ParrelSyncProjectSettings.cs" />
+     <Compile Include="Assets\ParrelSync\Editor\NonCore\OtherMenuItem.cs" />
+     <Compile Include="Assets\ParrelSync\Editor\UpdateChecker.cs" />
+     <Compile Include="Assets\ParrelSync\Editor\FileUtilities.cs" />
      <None Include="Assets\ParrelSync\projectCloner.asmdef" />
     <Reference Include="UnityEngine">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.15f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Alteruna;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -25,12 +26,20 @@ public class PlayerMovement : MonoBehaviour
 
     Rigidbody rb;
 
+    private Alteruna.Avatar _avatar;
+
     private void Start() {
+        _avatar = GetComponent<Alteruna.Avatar>();
+
+        if (!_avatar.IsMe) return;
+
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
     }
 
     private void Update() {
+        if (!_avatar.IsMe) return;
+
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
 
         MyInput();
@@ -43,6 +52,8 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void FixedUpdate() {
+        if (!_avatar.IsMe) return;
+        
         MovePlayer();
     }
 

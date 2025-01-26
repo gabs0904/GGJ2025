@@ -36,7 +36,6 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\LobbyMenu.cs" />
      <Compile Include="Assets\Scripts\PlayerMovement.cs" />
      <Compile Include="Assets\UnityTechnologies\ParticlePack\Shared\Scripts\ProximityActivate.cs" />
      <Compile Include="Assets\Scripts\SoundInputController.cs" />
@@ -44,17 +43,21 @@
      <Compile Include="Assets\UnityTechnologies\ParticlePack\Shared\Ramps\Runtime\RampAsset.cs" />
      <Compile Include="Assets\UnityTechnologies\ParticlePack\Shared\Scripts\SimpleCameraController.cs" />
      <Compile Include="Assets\UnityTechnologies\ParticlePack\Shared\Scripts\SimpleCharacterMotor.cs" />
-     <Compile Include="Assets\Scripts\GameManager.cs" />
-     <Compile Include="Assets\Scripts\OnlinePlayerMovement.cs" />
      <Compile Include="Assets\UnityTechnologies\ParticlePack\TutorialInfo\Scripts\Readme.cs" />
-     <Compile Include="Assets\Scripts\NetworkUtils.cs" />
      <Compile Include="Assets\UnityTechnologies\ParticlePack\Shared\Scripts\AdjustTimeScale.cs" />
      <Compile Include="Assets\Scripts\InitiatePlayer.cs" />
      <Compile Include="Assets\Scripts\MicrophoneController.cs" />
      <Compile Include="Assets\Scripts\CameraControl.cs" />
+     <Compile Include="Assets\Alteruna\Scripts\Examples\ExampleAttributeRpc.cs" />
+     <Compile Include="Assets\Alteruna\Scripts\Examples\ExampleRpcSerializable.cs" />
+     <Compile Include="Assets\Alteruna\Prefabs\RoomMenu\RoomMenu.cs" />
+     <Compile Include="Assets\Alteruna\Scripts\Examples\ExampleRpcProcedureParameters.cs" />
+     <Compile Include="Assets\Alteruna\Scripts\Examples\ExampleSynchronizable.cs" />
+     <Compile Include="Assets\Alteruna\Prefabs\TextChat\TextChatSynchronizable.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
+     <None Include="Assets\Alteruna\Plugins\Alteruna.Trinity.xml" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
@@ -65,6 +68,7 @@
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
+     <None Include="Assets\Alteruna\Resources\RegisteredLicense.txt" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
@@ -319,24 +323,6 @@
     <Reference Include="UnityEditor.UnityConnectModule">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.15f1\Editor\Data\Managed\UnityEngine\UnityEditor.UnityConnectModule.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Collections.LowLevel.ILSupport">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\PackageCache\com.unity.collections@1.2.4\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Burst.Unsafe">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\PackageCache\com.unity.burst@1.6.6\Unity.Burst.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Burst.Cecil.Mdb">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\PackageCache\com.unity.burst@1.6.6\Unity.Burst.CodeGen\Unity.Burst.Cecil.Mdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Burst.Cecil.Pdb">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\PackageCache\com.unity.burst@1.6.6\Unity.Burst.CodeGen\Unity.Burst.Cecil.Pdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Burst.Cecil">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\PackageCache\com.unity.burst@1.6.6\Unity.Burst.CodeGen\Unity.Burst.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Burst.Cecil.Rocks">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\PackageCache\com.unity.burst@1.6.6\Unity.Burst.CodeGen\Unity.Burst.Cecil.Rocks.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\PackageCache\com.unity.visualscripting@1.7.8\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
     </Reference>
@@ -346,8 +332,11 @@
     <Reference Include="Newtonsoft.Json">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\PackageCache\com.unity.nuget.newtonsoft-json@3.0.2\Runtime\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\PackageCache\com.unity.nuget.mono-cecil@1.10.1\Mono.Cecil.dll</HintPath>
+    <Reference Include="Alteruna.Trinity">
+        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Assets\Alteruna\Plugins\Alteruna.Trinity.dll</HintPath>
+    </Reference>
+    <Reference Include="Alteruna.TrinityEditor">
+        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Assets\Alteruna\Plugins\Alteruna.TrinityEditor.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.15f1\Editor\Data\NetStandard\ref\2.1.0\netstandard.dll</HintPath>
@@ -745,17 +734,11 @@
     <Reference Include="Unity.VisualScripting.State.Editor">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.VisualScripting.State.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Burst.Editor">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Burst.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.VisualScripting.SettingsProvider.Editor">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.VisualScripting.SettingsProvider.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Networking.Editor">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Networking.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
@@ -769,9 +752,6 @@
     <Reference Include="Unity.VisualScripting.Flow">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.VisualScripting.Flow.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Netcode.Runtime">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Netcode.Runtime.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.UI">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -784,26 +764,11 @@
     <Reference Include="Unity.EditorCoroutines.Editor">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.EditorCoroutines.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Networking.Transport">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Networking.Transport.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Mathematics">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Mathematics.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Netcode.Editor">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Netcode.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Netcode.Components">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Netcode.Components.dll</HintPath>
-    </Reference>
     <Reference Include="Cinemachine">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Cinemachine.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Services.Core.Analytics">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Services.Core.Analytics.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Burst">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Burst.dll</HintPath>
     </Reference>
     <Reference Include="com.unity.cinemachine.editor">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\com.unity.cinemachine.editor.dll</HintPath>
@@ -816,15 +781,6 @@
     </Reference>
     <Reference Include="Unity.Timeline.Editor">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Mathematics.Editor">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Mathematics.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Collections">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Netcode.Editor.PackageChecker">
-        <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.Netcode.Editor.PackageChecker.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TestTools.CodeCoverage.Editor">
         <HintPath>C:\Gamejam\project\GGJ2025\ggj2025\Library\ScriptAssemblies\Unity.TestTools.CodeCoverage.Editor.dll</HintPath>

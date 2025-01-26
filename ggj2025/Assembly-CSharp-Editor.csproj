@@ -851,6 +851,10 @@
       <Project>{6a1d79e3-bde5-b65a-dd10-13179f7f5607}</Project>
       <Name>Assembly-CSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="ParrelSync.csproj">
+      <Project>{b30d93e3-cbe6-b5d7-2801-dcdde5d5359c}</Project>
+      <Name>ParrelSync</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

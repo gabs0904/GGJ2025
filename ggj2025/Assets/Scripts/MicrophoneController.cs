@@ -12,6 +12,8 @@ public class MicrophoneController : MonoBehaviour
     public ParticleSystem explosionEffect;
     private bool hasExploded = false;
 
+    public GameObject bubble;
+
 
     void Start()
     {

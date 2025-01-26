@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
 using Cinemachine;
+using Alteruna;
 
-public class InitiatePlayer : NetworkBehaviour
+public class InitiatePlayer : MonoBehaviour
 {
     public GameObject camera;
 
     void Start() {
-        if (!IsOwner) return;
+        
+        Alteruna.Avatar _avatar = GetComponent<Alteruna.Avatar>();
+
+        if (!_avatar.IsMe) return;
 
 
         CinemachineFreeLook cmCam = Instantiate(camera).GetComponent<CinemachineFreeLook>();
