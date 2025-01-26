@@ -83,7 +83,7 @@ public class MicrophoneController : MonoBehaviour {
 
         float loudness = GetLoudnessInDecibels();
 
-        if (loudness >= threshold) {
+        if (loudness >= threshold && fartDuration > maxFartDuration) {
             fartDuration += Time.deltaTime;
             ScaleFart();
         } else {

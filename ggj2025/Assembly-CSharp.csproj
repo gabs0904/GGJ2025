@@ -61,6 +61,7 @@
     <Analyzer Include="D:\Programs\Unity\2023.2.20f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\InitiatePlayer.cs" />
     <Compile Include="Assets\Alteruna\Scripts\Examples\ExampleAttributeRpc.cs" />
     <Compile Include="Assets\UnityTechnologies\ParticlePack\Shared\Ramps\Runtime\RampAsset.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Assets\UnityTechnologies\ParticlePack\Shared\Scripts\ProximityActivate.cs" />
     <Compile Include="Assets\Alteruna\Scripts\Examples\ExampleRpcProcedureParameters.cs" />
     <Compile Include="Assets\UnityTechnologies\ParticlePack\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\Scripts\PlayerStats.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Alteruna\Plugins\Alteruna.TrinityEditor.dll" />

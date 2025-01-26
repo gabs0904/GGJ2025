@@ -243,7 +243,7 @@ GameObject:
   - component: {fileID: 4399901039205357475}
   m_Layer: 0
   m_Name: Player 1
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -396,9 +396,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explosionEffect: {fileID: 0}
   bomb: {fileID: 0}
-  fartBubblePrefab: {fileID: 0}
-  loudnessText: {fileID: 0}
-  durationText: {fileID: 0}
+  fartBubblePrefab: {fileID: 7488469608323532184, guid: 55d128f0876fbb945b6e0764f93cec70, type: 3}
   threshold: 0.005
   maxFartDuration: 10
   maxFartDamage: 300

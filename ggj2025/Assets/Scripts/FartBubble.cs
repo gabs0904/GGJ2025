@@ -12,7 +12,7 @@ public class FartBubble : MonoBehaviour
 
         foreach (Collider collider in colliders) {
             if (collider.gameObject.tag == "Player") {
-
+                collider.gameObject.GetComponent<PlayerStats>().Damage(damage);
             }
         }
     }
