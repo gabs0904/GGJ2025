@@ -1,22 +1,52 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
-public class MicrophoneController : MonoBehaviour
-{
-    public float threshold = 0.01f; // Minimum loudness to trigger scaling
-    public float sensitivity = 5f; // Controls how quickly the object grows
-    public Vector3 baseScale = Vector3.one; // Initial size of the object
+public class MicrophoneController : MonoBehaviour {
+
+    #region objects
+
+    public ParticleSystem explosionEffect;
+    public GameObject bomb;
+
+    public GameObject fartBubblePrefab;
+
+    public TMP_Text loudnessText;
+    public TMP_Text durationText;
+
+    #endregion
+
+    #region parameters
+
+    public int maxCharge = 1000;
+
+    public float threshold = 0.005f;    // Minimum loudness to trigger scaling
+    public float sensitivity = 5f;      // Controls how quickly the object grows
+
+    public float maxFartDuration = 10f;
+    public float maxFartDamage = 300f;
+
+    public float startFartSize = 0.2f;
+    public float maxFartSize = 2f;
+
+    #endregion
+
+    #region private
 
     private AudioSource audioSource;
-    public ParticleSystem explosionEffect;
-    private bool hasExploded = false;
+    private bool isMicInitialized = false;
 
-    public GameObject bubble;
+    private float fartDuration;
+    private GameObject fartBubble = null;
+
+    private float scaleRate; 
+
+    #endregion
 
 
-    void Start()
-    {
+    void Start() {
         // Set up the AudioSource to use the microphone
         audioSource = gameObject.AddComponent<AudioSource>();
         if (Microphone.devices.Length > 0)
@@ -26,71 +56,101 @@ public class MicrophoneController : MonoBehaviour
             // Assign the microphone as the AudioClip
             audioSource.clip = Microphone.Start(null, true, 1, 44100); // Default mic
             audioSource.loop = true;
-            // audioSource.mute = true; // Mute the mic so we don't hear it
-            // Wait for the microphone to start
-            while (Microphone.GetPosition(null) <= 0) { } // Wait for mic to initialize
-            audioSource.Play();
+            StartCoroutine(WaitForMicToInitialize());
         }
         else
         {
             Debug.LogError("No microphone detected!");
         }
+
+        scaleRate = (maxFartSize - startFartSize) / maxFartDuration;
     }
 
-    void Update()
-    {
-        // Get the current loudness of the microphone input
-        float loudness = GetLoudness();
-        Debug.Log("Loudness: " + loudness);
-
-        // If loudness drops below threshold, trigger explosion
-        if (loudness < 0.001f && !hasExploded) // You can adjust this value for better triggering
+    IEnumerator WaitForMicToInitialize() {
+        while (!(Microphone.GetPosition(null) > 0))
         {
-            Debug.LogWarning($"Explosion effect happens at loudnes {loudness}");
-            TriggerExplosion();
+            yield return null; // Wait until the mic is ready
         }
 
-        // Check if loudness exceeds the threshold (to scale object)
-        if (loudness > threshold)
-        {
-            // Scale object based on loudness
-            float scaleFactor = 1 + (loudness * sensitivity);
-            transform.localScale = baseScale * scaleFactor;
-        }
-        else
-        {
-            // Reset to base scale when loudness is below threshold
-            transform.localScale = baseScale;
+        audioSource.Play();
+        isMicInitialized = true; // Mic is now initialized
+        Debug.Log("Microphone initialized.");
+    }
+
+    void Update() {
+        if (!isMicInitialized) return;
+
+        durationText.text = fartDuration + "s";
+
+        float loudness = GetLoudnessInDecibels();
+
+        if (loudness >= threshold) {
+            fartDuration += Time.deltaTime;
+            ScaleFart();
+        } else {
+            EndFart(fartDuration);
+
+            fartDuration = 0;
         }
     }
 
-    void TriggerExplosion()
-    {
-        // Play the explosion particle effect
-        if (explosionEffect != null)
-        {
-            explosionEffect.Play();
-        }
-        else
-        {
-            Debug.LogWarning("Explosion effect is not assigned.");
+    void ScaleFart() {
+        if (fartBubble == null) {
+            fartBubble = Instantiate(fartBubblePrefab);
+            fartBubble.transform.position = transform.position;
+            float currentSize = 0;
         }
 
-        hasExploded = true; // Prevent triggering it again until reset
+        currentSize += scaleRate * Time.deltaTime;
+        fartBubble.transform.localScale = new Vector3(currentSize, currentSize, currentSize);
     }
 
-    // Function to calculate the loudness of the microphone input
-    float GetLoudness()
-    {
-        float[] data = new float[256]; // Array to hold audio samples
-        audioSource.GetOutputData(data, 0); // Fill array with raw audio data
+    void EndFart(float duration) {
+        Invoke(fartBubble.GetComponent<FartBubble>().Explode(), duration);
 
-        float sum = 0f;
-        foreach (float sample in data) {
-            sum += sample * sample; // Square each sample
+        fartBubble = null;
+    }
+
+    void UpdateParticleIntensity() {
+        if (explosionEffect != null) {
+            // Adjust particle properties based on the charge level
+            ParticleSystem.MainModule main = explosionEffect.main;
+            ParticleSystem.EmissionModule emission = explosionEffect.emission;
+
+            float normalizedCharge = (float)charge / maxCharge; // Normalize charge between 0 and 1
+
+            Debug.Log($"Normalized Charge: {normalizedCharge}");
+
+            // Scale start size and start speed based on charge
+            main.startSize = Mathf.Lerp(0.5f, 3.0f, normalizedCharge); // From 0.5 to 3.0
+            main.startSpeed = Mathf.Lerp(1.0f, 10.0f, normalizedCharge); // From 1.0 to 10.0
+            emission.rateOverTime = Mathf.Lerp(10, 100, normalizedCharge); // From 10 particles/sec to 100
+
+            Debug.Log($"Particle Size: {main.startSize.constant}, Speed: {main.startSpeed.constant}, Emission Rate: {emission.rateOverTime.constant}");
         }
-        float rms = Mathf.Sqrt(sum / data.Length); // Take the square root of the average
-        float db = 20f * Mathf.Log10(rms);
-        return db;
+    }
+
+    float GetLoudnessInDecibels() {
+        float[] data = new float[16]; // Array to hold audio samples
+
+        if (Microphone.GetPosition(null) > 0) {
+            audioSource.GetOutputData(data, 0); // Fill array with raw audio data
+        } else {
+            return -80f; // Return a very low dB value if the microphone isn't active
+        }
+
+        float rms = 0f; // Root Mean Square value
+        for (int i = 0; i < data.Length; i++) {
+            rms += data[i] * data[i]; // Sum of squares of the samples
+        }
+
+        rms = Mathf.Sqrt(rms / data.Length); // Square root of the average
+
+        // Convert RMS to decibels
+        float db = 20f * Mathf.Log10(rms / 0.1f); // Reference value is set to 0.1f (adjust if necessary)
+
+        loudnessText.text = Mathf.Clamp(db, -80f, 0f) + "db";
+
+        return Mathf.Clamp(db, -80f, 0f); // Clamp between -80 dB (silence) and 0 dB (maximum loudness)
     }
 }
