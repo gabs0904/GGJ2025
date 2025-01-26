@@ -44,6 +44,7 @@ public class MicrophoneController : MonoBehaviour {
 
     #endregion
 
+    float temp = 0;
 
     void Start() {
         // Set up the AudioSource to use the microphone
@@ -80,19 +81,36 @@ public class MicrophoneController : MonoBehaviour {
         if (!isMicInitialized) return;
 
         //durationText.text = fartDuration + "s";
-
+        /*
         float loudness = GetLoudnessInDecibels();
-        Debug.Log(loudness);
+
         if (loudness <= threshold && fartDuration < maxFartDuration) {
-            Debug.Log($"Getting mic input at {loudness} db");
             fartDuration += Time.deltaTime;
             ScaleFart();
         } else if (fartBubble != null) {
-            //print("Input stopped and bubble is getting exploded");
+
             IEnumerator endfart = EndFart(fartDuration);
             StartCoroutine(endfart);
 
             fartDuration = 0;
+        }
+        */
+        temp += Time.deltaTime;
+
+        if (temp > 5 && temp < 15) {
+            fartDuration += Time.deltaTime;
+            ScaleFart();
+        } else if (fartBubble != null) {
+
+            IEnumerator endfart = EndFart(fartDuration);
+            StartCoroutine(endfart);
+
+            fartDuration = 0;
+
+            temp = 0;
+        } else if (fartBubble == null) {
+            // Add this extra check to ensure the fart bubble is instantiated if it gets destroyed
+            ScaleFart();
         }
     }
 
@@ -113,9 +131,10 @@ public class MicrophoneController : MonoBehaviour {
         print("EndFart method started");
         yield return new WaitForSeconds(duration);
 
-        fartBubble.GetComponent<FartBubble>().Explode();
-
-        fartBubble = null;
+        if (fartBubble != null) {
+            fartBubble.GetComponent<FartBubble>().Explode();
+            fartBubble = null; // Only reset fartBubble here
+        }
     }
 
     float GetLoudnessInDecibels() {
