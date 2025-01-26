@@ -84,9 +84,11 @@ public class MicrophoneController : MonoBehaviour {
         float loudness = GetLoudnessInDecibels();
 
         if (loudness >= threshold && fartDuration > maxFartDuration) {
+            print($"Getting mic input at {loudness} db");
             fartDuration += Time.deltaTime;
             ScaleFart();
         } else if (fartBubble != null) {
+            print("Input stopped and bubble is getting exploded");
             IEnumerator endfart = EndFart(fartDuration);
             StartCoroutine(endfart);
 
@@ -106,6 +108,7 @@ public class MicrophoneController : MonoBehaviour {
     }
 
     IEnumerator EndFart(float duration) {
+        print("EndFart method started");
         yield return new WaitForSeconds(duration);
 
         fartBubble.GetComponent<FartBubble>().Explode();
