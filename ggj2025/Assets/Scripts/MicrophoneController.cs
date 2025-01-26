@@ -82,13 +82,13 @@ public class MicrophoneController : MonoBehaviour {
         //durationText.text = fartDuration + "s";
 
         float loudness = GetLoudnessInDecibels();
-
-        if (loudness >= threshold && fartDuration > maxFartDuration) {
-            print($"Getting mic input at {loudness} db");
+        
+        if (loudness <= threshold && fartDuration < maxFartDuration) {
+            //print($"Getting mic input at {loudness} db");
             fartDuration += Time.deltaTime;
             ScaleFart();
         } else if (fartBubble != null) {
-            print("Input stopped and bubble is getting exploded");
+            //print("Input stopped and bubble is getting exploded");
             IEnumerator endfart = EndFart(fartDuration);
             StartCoroutine(endfart);
 
@@ -98,9 +98,11 @@ public class MicrophoneController : MonoBehaviour {
 
     void ScaleFart() {
         if (fartBubble == null) {
-            fartBubble = Instantiate(fartBubblePrefab);
+            print("Spawned fart bubble");
+            fartBubble = Instantiate(fartBubblePrefab) as GameObject;
+            print(fartBubble);
             fartBubble.transform.position = transform.position;
-            currentSize = 0;
+            currentSize = startFartSize;
         }
 
         currentSize += scaleRate * Time.deltaTime;
