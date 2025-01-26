@@ -81,12 +81,21 @@ public class MicrophoneController : MonoBehaviour {
         if (!isMicInitialized) return;
 
         //durationText.text = fartDuration + "s";
-        /*
+
         float loudness = GetLoudnessInDecibels();
 
         if (loudness <= threshold && fartDuration < maxFartDuration) {
-            fartDuration += Time.deltaTime;
-            ScaleFart();
+            if (fartBubble == null) {
+
+                print("Spawning fart bubble");
+
+                fartBubble = Instantiate(fartBubblePrefab) as GameObject;
+
+                fartBubble.transform.position = transform.position;
+                currentSize = startFartSize;
+
+                ScaleFart();
+            }
         } else if (fartBubble != null) {
 
             IEnumerator endfart = EndFart(fartDuration);
@@ -94,7 +103,8 @@ public class MicrophoneController : MonoBehaviour {
 
             fartDuration = 0;
         }
-        */
+
+        /*
         temp += Time.deltaTime;
 
         if (temp > 5 && temp < 15) {
@@ -112,16 +122,10 @@ public class MicrophoneController : MonoBehaviour {
             // Add this extra check to ensure the fart bubble is instantiated if it gets destroyed
             ScaleFart();
         }
+        */
     }
 
     void ScaleFart() {
-        if (fartBubble == null) {
-            print("Spawned fart bubble");
-            fartBubble = Instantiate(fartBubblePrefab) as GameObject;
-            print(fartBubble);
-            fartBubble.transform.position = transform.position;
-            currentSize = startFartSize;
-        }
 
         currentSize += scaleRate * Time.deltaTime;
         fartBubble.transform.localScale = new Vector3(currentSize, currentSize, currentSize);
