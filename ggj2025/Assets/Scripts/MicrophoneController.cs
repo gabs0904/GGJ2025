@@ -9,7 +9,7 @@ public class MicrophoneController : MonoBehaviour {
     #region objects
 
     public ParticleSystem explosionEffect;
-    public GameObject bomb;
+    //public GameObject bomb;
 
     public GameObject fartBubblePrefab;
 
@@ -44,6 +44,7 @@ public class MicrophoneController : MonoBehaviour {
 
     #endregion
 
+    float temp = 0;
 
     void Start() {
         // Set up the AudioSource to use the microphone
@@ -83,34 +84,61 @@ public class MicrophoneController : MonoBehaviour {
 
         float loudness = GetLoudnessInDecibels();
 
-        if (loudness >= threshold) {
-            fartDuration += Time.deltaTime;
-            ScaleFart();
-        } else {
+        if (loudness <= threshold && fartDuration < maxFartDuration) {
+            if (fartBubble == null) {
+
+                print("Spawning fart bubble");
+
+                fartBubble = Instantiate(fartBubblePrefab) as GameObject;
+
+                fartBubble.transform.position = transform.position;
+                currentSize = startFartSize;
+
+                ScaleFart();
+            }
+        } else if (fartBubble != null) {
+
             IEnumerator endfart = EndFart(fartDuration);
             StartCoroutine(endfart);
 
             fartDuration = 0;
         }
+
+        /*
+        temp += Time.deltaTime;
+
+        if (temp > 5 && temp < 15) {
+            fartDuration += Time.deltaTime;
+            ScaleFart();
+        } else if (fartBubble != null) {
+
+            IEnumerator endfart = EndFart(fartDuration);
+            StartCoroutine(endfart);
+
+            fartDuration = 0;
+
+            temp = 0;
+        } else if (fartBubble == null) {
+            // Add this extra check to ensure the fart bubble is instantiated if it gets destroyed
+            ScaleFart();
+        }
+        */
     }
 
     void ScaleFart() {
-        if (fartBubble == null) {
-            fartBubble = Instantiate(fartBubblePrefab);
-            fartBubble.transform.position = transform.position;
-            currentSize = 0;
-        }
 
         currentSize += scaleRate * Time.deltaTime;
         fartBubble.transform.localScale = new Vector3(currentSize, currentSize, currentSize);
     }
 
     IEnumerator EndFart(float duration) {
+        print("EndFart method started");
         yield return new WaitForSeconds(duration);
 
-        fartBubble.GetComponent<FartBubble>().Explode();
-
-        fartBubble = null;
+        if (fartBubble != null) {
+            fartBubble.GetComponent<FartBubble>().Explode();
+            fartBubble = null; // Only reset fartBubble here
+        }
     }
 
     float GetLoudnessInDecibels() {
