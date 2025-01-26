@@ -9,7 +9,7 @@ public class MicrophoneController : MonoBehaviour {
     #region objects
 
     public ParticleSystem explosionEffect;
-    public GameObject bomb;
+    //public GameObject bomb;
 
     public GameObject fartBubblePrefab;
 
@@ -86,7 +86,7 @@ public class MicrophoneController : MonoBehaviour {
         if (loudness >= threshold && fartDuration > maxFartDuration) {
             fartDuration += Time.deltaTime;
             ScaleFart();
-        } else {
+        } else if (fartBubble != null) {
             IEnumerator endfart = EndFart(fartDuration);
             StartCoroutine(endfart);
 
