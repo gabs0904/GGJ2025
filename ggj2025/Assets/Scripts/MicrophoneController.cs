@@ -13,17 +13,14 @@ public class MicrophoneController : MonoBehaviour {
 
     public GameObject fartBubblePrefab;
 
-    public TMP_Text loudnessText;
-    public TMP_Text durationText;
+    //public TMP_Text loudnessText;
+    //public TMP_Text durationText;
 
     #endregion
 
     #region parameters
 
-    public int maxCharge = 1000;
-
-    public float threshold = 0.005f;    // Minimum loudness to trigger scaling
-    public float sensitivity = 5f;      // Controls how quickly the object grows
+    public float threshold = -20;    // Minimum loudness to trigger scaling
 
     public float maxFartDuration = 10f;
     public float maxFartDamage = 300f;
@@ -41,7 +38,9 @@ public class MicrophoneController : MonoBehaviour {
     private float fartDuration;
     private GameObject fartBubble = null;
 
-    private float scaleRate; 
+    private float scaleRate;
+    private float currentSize = 0;
+    private float scalingRate;
 
     #endregion
 
@@ -63,7 +62,7 @@ public class MicrophoneController : MonoBehaviour {
             Debug.LogError("No microphone detected!");
         }
 
-        scaleRate = (maxFartSize - startFartSize) / maxFartDuration;
+        scalingRate = (maxFartSize - startFartSize) / maxFartDuration;
     }
 
     IEnumerator WaitForMicToInitialize() {
@@ -80,7 +79,7 @@ public class MicrophoneController : MonoBehaviour {
     void Update() {
         if (!isMicInitialized) return;
 
-        durationText.text = fartDuration + "s";
+        //durationText.text = fartDuration + "s";
 
         float loudness = GetLoudnessInDecibels();
 
@@ -88,7 +87,8 @@ public class MicrophoneController : MonoBehaviour {
             fartDuration += Time.deltaTime;
             ScaleFart();
         } else {
-            EndFart(fartDuration);
+            IEnumerator endfart = EndFart(fartDuration);
+            StartCoroutine(endfart);
 
             fartDuration = 0;
         }
@@ -98,36 +98,19 @@ public class MicrophoneController : MonoBehaviour {
         if (fartBubble == null) {
             fartBubble = Instantiate(fartBubblePrefab);
             fartBubble.transform.position = transform.position;
-            float currentSize = 0;
+            currentSize = 0;
         }
 
         currentSize += scaleRate * Time.deltaTime;
         fartBubble.transform.localScale = new Vector3(currentSize, currentSize, currentSize);
     }
 
-    void EndFart(float duration) {
-        Invoke(fartBubble.GetComponent<FartBubble>().Explode(), duration);
+    IEnumerator EndFart(float duration) {
+        yield return new WaitForSeconds(duration);
+
+        fartBubble.GetComponent<FartBubble>().Explode();
 
         fartBubble = null;
-    }
-
-    void UpdateParticleIntensity() {
-        if (explosionEffect != null) {
-            // Adjust particle properties based on the charge level
-            ParticleSystem.MainModule main = explosionEffect.main;
-            ParticleSystem.EmissionModule emission = explosionEffect.emission;
-
-            float normalizedCharge = (float)charge / maxCharge; // Normalize charge between 0 and 1
-
-            Debug.Log($"Normalized Charge: {normalizedCharge}");
-
-            // Scale start size and start speed based on charge
-            main.startSize = Mathf.Lerp(0.5f, 3.0f, normalizedCharge); // From 0.5 to 3.0
-            main.startSpeed = Mathf.Lerp(1.0f, 10.0f, normalizedCharge); // From 1.0 to 10.0
-            emission.rateOverTime = Mathf.Lerp(10, 100, normalizedCharge); // From 10 particles/sec to 100
-
-            Debug.Log($"Particle Size: {main.startSize.constant}, Speed: {main.startSpeed.constant}, Emission Rate: {emission.rateOverTime.constant}");
-        }
     }
 
     float GetLoudnessInDecibels() {
@@ -149,7 +132,7 @@ public class MicrophoneController : MonoBehaviour {
         // Convert RMS to decibels
         float db = 20f * Mathf.Log10(rms / 0.1f); // Reference value is set to 0.1f (adjust if necessary)
 
-        loudnessText.text = Mathf.Clamp(db, -80f, 0f) + "db";
+        //loudnessText.text = Mathf.Clamp(db, -80f, 0f) + "db";
 
         return Mathf.Clamp(db, -80f, 0f); // Clamp between -80 dB (silence) and 0 dB (maximum loudness)
     }
