@@ -82,9 +82,9 @@ public class MicrophoneController : MonoBehaviour {
         //durationText.text = fartDuration + "s";
 
         float loudness = GetLoudnessInDecibels();
-        
+        Debug.Log(loudness);
         if (loudness <= threshold && fartDuration < maxFartDuration) {
-            //print($"Getting mic input at {loudness} db");
+            Debug.Log($"Getting mic input at {loudness} db");
             fartDuration += Time.deltaTime;
             ScaleFart();
         } else if (fartBubble != null) {
